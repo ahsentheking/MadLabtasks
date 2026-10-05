@@ -1,0 +1,458 @@
+const String rollNo = 'YOUR-ROLL-NO-HERE';
+
+//Seed
+final int seed = int.parse(rollNo.substring(rollNo.length - 2));
+final int t = seed ~/ 10;
+final int u = seed % 10;
+
+const List<String> menu = [
+  'Chai',
+  'Latte',
+  'Mocha',
+  'Samosa',
+  'Brownie',
+  'Sandwich',
+  'Cold Coffee',
+  'Fries',
+  'Pakora',
+  'Zinger Wrap',
+];
+
+int priceOf(int i) => 100 + 7 * i + 3 * t;
+
+final int priceFloor = 60 + 5 * t;
+final int taxPercent = 5 + t;
+final int bigOrderLimit = 450 + 20 * t;
+final int balanceCap = 600 + 20 * t;
+final int couponPercent = 5 + t + u;
+
+
+//   CLASS 
+class Dish {
+  late String name;
+  late int price;
+}
+
+
+// MAIN FUNCTION
+void main() {
+  print('Seed: $seed (t=$t, u=$u)');
+
+  step1();
+}
+
+
+// STEP 1
+void step1() {
+  print('--- Step 1 ---');
+
+  Dish item1 = Dish();
+  item1.name = menu[u];
+  item1.price = priceOf(u);
+
+  Dish item2 = Dish();
+
+  int index = (u + 1) % 10;
+
+  item2.name = menu[index];
+  item2.price = priceOf(index);
+
+  item2.price = item2.price - u;
+
+  print('Step 1: ${item1.name} Rs ${item1.price}');
+  print('Step 1: ${item2.name} Rs ${item2.price}');
+}
+
+
+// part 1 is aboove
+
+
+
+// part2 is here 
+
+// class MenuItem {
+//   String name;
+//   int price;
+
+//   MenuItem(this.name, this.price) {
+//     if (this.price < priceFloor) {
+//       this.price = priceFloor;
+//     }
+//   }
+// }
+
+// void step2() {
+//   print('--- Step 2 ---');
+
+//   MenuItem a = MenuItem(menu[u], priceOf(u));
+
+//   MenuItem b = MenuItem('Test Special', 15 * u);
+
+//   print('Step 2: ${a.name} Rs ${a.price}');
+//   print('Step 2: ${b.name} Rs ${b.price}');
+// }
+
+
+
+// part 3
+
+class MenuItem {
+  String name;
+  int price;
+
+  MenuItem(this.name, this.price) {
+    if (this.price < priceFloor) {
+      this.price = priceFloor;
+    }
+  }
+
+  MenuItem.free(this.name) : price = 0;
+
+  MenuItem.fromString(String text)
+      : name = text.split(':')[0],
+        price = int.parse(text.split(':')[1]);
+}
+
+void step3() {
+  print('--- Step 3 ---');
+
+  MenuItem freebie = MenuItem.free('Water');
+
+  int index = (u + 2) % 10;
+
+  MenuItem parsed =
+      MenuItem.fromString('${menu[index]}:${priceOf(index)}');
+
+  print('Step 3: ${freebie.name} Rs ${freebie.price}');
+  print('Step 3: ${parsed.name} Rs ${parsed.price}');
+  print('Step 3: floor=$priceFloor, free price=${freebie.price}');
+}
+
+
+
+// part 4
+
+
+class OrderLog {
+  static OrderLog? _instance;
+
+  final List<String> entries = [];
+
+  OrderLog._internal();
+
+  factory OrderLog() {
+    return _instance ??= OrderLog._internal();
+  }
+
+  void add(String msg) => entries.add(msg);
+}
+
+
+
+void step4() {
+  print('--- Step 4 ---');
+
+  OrderLog log1 = OrderLog();
+  OrderLog log2 = OrderLog();
+
+  for (int i = 1; i <= u + 2; i++) {
+    String message = 'order #${100 * t + i}';
+
+    if (i % 2 == 1) {
+      log1.add(message);
+    } else {
+      log2.add(message);
+    }
+  }
+
+  print('Step 4: same object? ${identical(log1, log2)}');
+  print('Step 4: entries = ${log1.entries.length}');
+  print('Step 4: last = ${log2.entries.last}');
+}
+
+
+
+// part 5
+
+// class OrderLine {
+//   final MenuItem item;
+//   final int qty;
+//   final int total;
+//   final int tax;
+
+//   OrderLine(this.item, this.qty)
+//       : total = item.price * qty,
+//         tax = (item.price * qty) * taxPercent ~/ 100,
+//         assert(qty > 0, 'qty must be positive');
+// }
+
+
+OrderLine mainOrder() {
+  return OrderLine(
+    MenuItem(menu[u], priceOf(u)),
+    2 + (t + u) % 5,
+  );
+}
+
+// void step5() {
+//   print('--- Step 5 ---');
+
+//   OrderLine line = mainOrder();
+
+//   print('Step 5: ${line.item.name} x${line.qty}');
+//   print('Step 5: total=${line.total} tax=${line.tax}');
+
+//   try {
+//     OrderLine(line.item, 0);
+//     print('Step 5: assert did NOT fire');
+//   } on AssertionError {
+//     print('Step 5: assert fired');
+//   }
+// }
+
+
+// part 6
+
+
+
+class OrderLine {
+  final MenuItem item;
+  final int qty;
+  final int total;
+  final int tax;
+
+  OrderLine(this.item, this.qty)
+      : total = item.price * qty,
+        tax = (item.price * qty) * taxPercent ~/ 100,
+        assert(qty > 0, 'qty must be positive');
+
+  int get grand => total + tax;
+
+bool get isBigOrder => grand > bigOrderLimit;
+
+String get label => '${item.name} x$qty';
+
+}
+
+
+void step6() {
+  print('--- Step 6 ---');
+
+  OrderLine line = mainOrder();
+
+  print('Step 6: grand=${line.grand}');
+  print('Step 6: big order? ${line.isBigOrder} (limit $bigOrderLimit)');
+  print('Step 6: label=${line.label}');
+}
+
+
+
+
+
+
+// part 7
+
+
+class StudentCard {
+  final String owner;
+  int _balance;
+
+  StudentCard(this.owner) : _balance = 0;
+
+  int get balance => _balance;
+
+  set balance(int v) {
+    if (v < 0) {
+      _balance = 0;
+    } else if (v > balanceCap) {
+      _balance = balanceCap;
+    } else {
+      _balance = v;
+    }
+  }
+}
+
+void step7() {
+  print('--- Step 7 ---');
+
+  StudentCard card = StudentCard('S$seed');
+
+  card.balance = seed * 10 + 50;
+  print('Step 7: topped up -> ${card.balance}');
+
+  card.balance = -seed - 1;
+  print('Step 7: bad value -> ${card.balance}');
+
+  card.balance = balanceCap - u;
+  print('Step 7: reset -> ${card.balance}');
+
+  card.balance = card.balance - mainOrder().grand;
+  print('Step 7: paid order -> ${card.balance}');
+}
+
+
+
+// part 8
+
+
+class MenuItem {
+  String name;
+  int price;
+
+  MenuItem(this.name, this.price) {
+    if (this.price < priceFloor) {
+      this.price = priceFloor;
+    }
+  }
+
+  MenuItem.free(this.name) : price = 0;
+
+  MenuItem.fromString(String text)
+      : name = text.split(':')[0],
+        price = int.parse(text.split(':')[1]);
+
+  @override
+  String toString() => '$name (Rs $price)';
+}
+
+
+List<MenuItem> buildMenu() {
+  return [
+    for (int k = 0; k < 4; k++)
+      MenuItem.fromString(
+        '${menu[(u + 3 * k) % 10]}:${priceOf((u + 3 * k) % 10)}',
+      )
+  ];
+}
+
+void step8() {
+  print('--- Step 8 ---');
+
+  final items = buildMenu();
+
+  final priciest = items.reduce(
+    (a, b) => a.price > b.price ? a : b,
+  );
+
+  final sum = items.fold(
+    0,
+    (total, item) => total + item.price,
+  );
+
+  print('Step 8: menu = $items');
+  print('Step 8: priciest = ${priciest.name}');
+  print('Step 8: sum = $sum');
+}
+
+
+
+// part 9
+
+
+List<OrderLine> buildReceipt() {
+  final items = buildMenu();
+
+  return [
+    for (int k = 0; k < 3; k++)
+      OrderLine(items[k], 1 + (t + k) % 4)
+  ];
+}
+
+void step9() {
+  print('--- Step 9 ---');
+
+  final receipt = buildReceipt();
+  int total = 0;
+
+  for (final line in receipt) {
+    print('Step 9: ${line.label} = ${line.grand}');
+
+    OrderLog().add('receipt: ${line.label}');
+
+    total += line.grand;
+  }
+
+  print('Step 9: receipt total = $total');
+  print('Step 9: log size = ${OrderLog().entries.length}');
+}
+
+
+
+// part 10
+
+
+class Coupon {
+  static final Map<String, Coupon> _cache = {};
+
+  final String code;
+  final int percent;
+  final int minSpend;
+
+  Coupon(this.code, this.percent)
+      : minSpend = percent * 70,
+        assert(percent >= 1 && percent <= 50);
+
+  factory Coupon.fromCode(String code) {
+    return _cache.putIfAbsent(
+      code,
+      () => Coupon(code, couponPercent),
+    );
+  }
+
+  int discountOn(int amount) {
+    if (amount >= minSpend) {
+      return amount * percent ~/ 100;
+    }
+
+    return 0;
+  }
+}
+
+void step10() {
+  print('--- Step 10 ---');
+
+  final code = 'CAFE${seed.toString().padLeft(2, '0')}';
+
+  final c1 = Coupon.fromCode(code);
+  final c2 = Coupon.fromCode(code);
+
+  final receipt = buildReceipt().fold(
+    0,
+    (total, line) => total + line.grand,
+  );
+
+  final discount = c1.discountOn(receipt);
+
+  print(
+    'Step 10: $code gives ${c1.percent}% off, min spend ${c1.minSpend}',
+  );
+
+  print('Step 10: cached? ${identical(c1, c2)}');
+
+  print(
+    'Step 10: receipt $receipt, discount $discount, payable ${receipt - discount}',
+  );
+}
+
+
+
+// Wrap-up Questions
+
+// Q1. Animal(this.name, this.type); and the verbose constructor give the same result.
+// What does the shorthand save you?
+// The shorthand saves us from writing this.field = field for each field.
+
+// Q2. When would you choose a named constructor, and when a factory constructor?
+// A named constructor is useful when a class needs different ways to create an object.
+// A factory constructor is useful when we want to control object creation, such as returning
+// an existing cached object.
+
+// Q3. What is the difference between assigning a field in a constructor body and assigning it
+// in an initializer list?
+// An initializer list assigns fields before the constructor body runs. It is also useful for
+// initializing final fields.
+
+// Q4. Give one reason to use a getter instead of storing the value in a field, and one reason
+// to use a setter instead of a public field.
+// A getter can calculate a value when it is needed. A setter allows us to validate or control
+// a value before storing it.
