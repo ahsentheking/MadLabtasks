@@ -180,27 +180,84 @@ class _ClockState extends State<Clock> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      'Session: $_seconds s',
-      key: const Key('clock'),
-    );
-  }
+//   @override
+//   Widget build(BuildContext context) {
+//     return Text(
+//       'Session: $_seconds s',
+//       key: const Key('clock'),
+//     );
+//   }
+// }
+
+@override
+Widget build(BuildContext context) {
+  _builds++;
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        'Session: $_seconds s',
+        key: const Key('clock'),
+      ),
+      Text(
+        'Builds: $_builds',
+        key: const Key('builds'),
+      ),
+      Probe(seconds: _seconds),
+    ],
+  );
 }
 
 
-/*
-Why does Builds increase by one per second and not by two?
 
-The Timer calls setState once every second. This schedules a rebuild
-of the widget, so the build counter increases by one per rebuild.
+// Why does Builds increase by one per second and not by two?
 
-/*
-Why must _timer.cancel() be called in dispose?
+// The Timer calls setState once every second. This schedules a rebuild
+// of the widget, so the build counter increases by one per rebuild.
 
-When the widget leaves the screen, dispose cancels the timer so it
-cannot keep running and calling setState on a disposed State object.
-Without cancellation, Flutter may report:
-"setState() called after dispose()".
-*/
+
+// Why must _timer.cancel() be called in dispose?
+
+// When the widget leaves the screen, dispose cancels the timer so it
+// cannot keep running and calling setState on a disposed State object.
+// Without cancellation, Flutter may report:
+// "setState() called after dispose()".
+
+class Probe extends StatelessWidget {
+  final int seconds;
+
+  const Probe({super.key, required this.seconds});
+
+  @override
+  Widget build(BuildContext context) {
+    final above =
+        context.findAncestorWidgetOfExactType<Scaffold>() != null;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Seen at: $seconds s',
+          key: const Key('probe-seen'),
+        ),
+        Text(
+          'Widget #${identityHashCode(this)}',
+          key: const Key('probe-widget'),
+        ),
+        Text(
+          'Element #${identityHashCode(context)}',
+          key: const Key('probe-element'),
+        ),
+        Text(
+          'Context belongs to: ${context.widget.runtimeType}',
+          key: const Key('probe-context'),
+        ),
+        Text(
+          'Scaffold above me: $above',
+          key: const Key('probe-above'),
+        ),
+      ],
+    );
+  }
+}
