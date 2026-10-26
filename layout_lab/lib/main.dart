@@ -112,8 +112,8 @@ class HomePage extends StatelessWidget {
     const Welcome(),
     const SizedBox(height: 12),
     const Clock(),
-    Row(
-      children: [
+    const SwapBoard(
+      vsr tiles = [
         Tile(tileA),
         Tile(tileB),
         Tile(tileC),
@@ -320,3 +320,42 @@ class _TileState extends State<Tile> {
 // Flutter prefers composition because small, reusable widgets can be
 // combined to build complex interfaces. Each Tile manages its own
 // state, making the code easier to reuse, test, and maintain.
+
+class SwapBoard extends StatefulWidget {
+  const SwapBoard({super.key});
+
+  @override
+  State<SwapBoard> createState() => _SwapBoardState();
+}
+
+class _SwapBoardState extends State<SwapBoard> {
+  var tiles = [
+    Tile(tileA, key: ValueKey(tileA)),
+    Tile(tileB, key: ValueKey(tileB)),
+    Tile(tileC, key: ValueKey(tileC)),
+  ];
+
+  void swap() => setState(() => tiles = tiles.reversed.toList());
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(children: tiles),
+        ElevatedButton(
+          key: const Key('swap'),
+          onPressed: swap,
+          child: const Text('Swap'),
+        ),
+      ],
+    );
+  }
+}
+
+// step 5
+// Without keys, Flutter matches widgets mainly by type and position.
+// When the tiles are reversed, the existing Element objects can be
+// reused at their old positions. Each Element retains its State,
+// so the counter may remain on the left even though the label changes.
+// ValueKey identifies each tile by its label, allowing Flutter to match
+// the widget with the correct Element and preserve its State.
