@@ -107,14 +107,19 @@ class HomePage extends StatelessWidget {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         Column(
-  children: [
-    const SettingsCard(),
-    const Welcome(),
-    const SizedBox(height: 12),
-    const Clock(),
-    const SwapBoard(),
-    const InfoPanel(),
-  ]
+  
+children: [
+  const SettingsCard(),
+  const SizedBox(height: 12),
+  const Welcome(),
+  const SizedBox(height: 12),
+  const Clock(),
+  const SizedBox(height: 12),
+  const SwapBoard(),
+  const SizedBox(height: 12),
+  const SummaryRow(),
+],
+
       vsr tiles = [
         Tile(tileA),
         Tile(tileB),
@@ -275,6 +280,42 @@ class SummaryRow extends StatelessWidget {
       ],
     );
   }
+  
+class SummaryRow extends StatelessWidget {
+  const SummaryRow({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Text(
+            'Part A: read the widget tree of the $course board from top to bottom.',
+            key: const Key('sum-a'),
+          ),
+        ),
+        Expanded(
+          child: Text(
+            'Part B: build each box from small widgets and never extend a built-in class.',
+            key: const Key('sum-b'),
+          ),
+        ),
+        Expanded(
+          child: Text(
+            'Part C: break the layout on purpose, then fix it with Expanded or Wrap.',
+            key: const Key('sum-c'),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// Think: Constraints go down, sizes go up.
+// Expanded gives each Text a share of the available Row width.
+// The Text receives a limited width, so it wraps its words onto multiple lines.
+
 }
 
 class Welcome extends StatelessWidget {
