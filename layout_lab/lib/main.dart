@@ -112,7 +112,9 @@ class HomePage extends StatelessWidget {
     const Welcome(),
     const SizedBox(height: 12),
     const Clock(),
-    const SwapBoard(
+    const SwapBoard(),
+    const InfoPanel(),
+  ]
       vsr tiles = [
         Tile(tileA),
         Tile(tileB),
@@ -359,3 +361,66 @@ class _SwapBoardState extends State<SwapBoard> {
 // so the counter may remain on the left even though the label changes.
 // ValueKey identifies each tile by its label, allowing Flutter to match
 // the widget with the correct Element and preserve its State.
+
+
+
+class InfoPanel extends StatelessWidget {
+  const InfoPanel({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          key: const Key('info-row'),
+          mainAxisAlignment: rowMainAxis,
+          children: [
+            Text(
+              'Start: $startSec s',
+              key: const Key('row-a'),
+            ),
+            Text(
+              'Tick: $tick s',
+              key: const Key('row-b'),
+            ),
+            Text(
+              'Stop: $stopAt s',
+              key: const Key('row-c'),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Column(
+          key: const Key('info-col'),
+          crossAxisAlignment: columnCrossAxis,
+          children: [
+            Text(
+              'Name: $studentName',
+              key: const Key('col-a'),
+            ),
+            Text(
+              'Roll no: $rollNo',
+              key: const Key('col-b'),
+            ),
+            Text(
+              'Course: $course',
+              key: const Key('col-c'),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+
+//step6
+
+// In a Column, the main axis is vertical because its children are
+// arranged from top to bottom.
+//
+// The cross axis is horizontal. Therefore, setting
+// crossAxisAlignment to CrossAxisAlignment.center centers the
+// children horizontally, moving their positions left or right
+// rather than moving them up or down.
