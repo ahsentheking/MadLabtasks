@@ -119,7 +119,9 @@ children: [
   const SizedBox(height: 12),
   const SummaryRow(),
   const SizedBox(height: 12),
-  const ShareRow()
+  const ShareRow(),
+  const SizedBox(height: 12),
+  const InfoBox()
 ],
 
       vsr tiles = [
@@ -510,3 +512,32 @@ class ShareRow extends StatelessWidget {
 // Expanded must fill its allocated share. Flexible can keep its child
 // at its natural size. If we swap them, Exp may stay smaller and Flex
 // will fill its allocated share instead.
+
+class InfoBox extends StatelessWidget {
+  const InfoBox({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: const Key('info-box'),
+      margin: EdgeInsets.all(boxMargin),
+      padding: EdgeInsets.all(boxPad),
+      decoration: BoxDecoration(
+        color: swatches[hue]!.shade100,
+        borderRadius: BorderRadius.circular(boxRadius),
+        border: Border.all(width: boxBorder),
+      ),
+      child: Text(
+        'Course: $course',
+        key: const Key('box-text'),
+      ),
+    );
+  }
+}
+
+// Think:
+// Padding is inside the border; margin is outside the border.
+// Use Padding when you only need inner space around a child.
+// Use SizedBox when you need a fixed size or a simple gap.
+// Use Container when you need decoration, a background, a border,
+// or a combination of layout and styling.
