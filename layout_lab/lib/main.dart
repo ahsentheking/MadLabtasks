@@ -83,6 +83,12 @@ class LabApp extends StatelessWidget {
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
+  Column(
+  children: [
+    const SettingsCard(),
+    const Clock(),
+  ],
+)
 
   @override
   Widget build(BuildContext context) {
@@ -182,3 +188,19 @@ class _ClockState extends State<Clock> {
     );
   }
 }
+
+
+/*
+Why does Builds increase by one per second and not by two?
+
+The Timer calls setState once every second. This schedules a rebuild
+of the widget, so the build counter increases by one per rebuild.
+
+/*
+Why must _timer.cancel() be called in dispose?
+
+When the widget leaves the screen, dispose cancels the timer so it
+cannot keep running and calling setState on a disposed State object.
+Without cancellation, Flutter may report:
+"setState() called after dispose()".
+*/
