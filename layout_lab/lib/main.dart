@@ -149,3 +149,36 @@ class SummaryRow extends StatelessWidget {
     );
   }
 }
+import 'dart:async';
+import 'package:flutter/material.dart';
+
+class Clock extends StatefulWidget {
+  const Clock({super.key});
+
+  @override
+  _ClockState createState() => _ClockState();
+}
+
+class _ClockState extends State<Clock> {
+  late Timer _timer;
+  int _seconds = startSec;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() => _seconds += tick);
+
+      if (_seconds >= stopAt) timer.cancel();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      'Session: $_seconds s',
+      key: const Key('clock'),
+    );
+  }
+}
