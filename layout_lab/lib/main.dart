@@ -1,26 +1,41 @@
-// main.dart - Team Board lab
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 
 const String studentName = 'AHSEN';
-const String rollNo = '04072312012'; // e.g. '21F-0347'
+const String rollNo = '04072312012';
 
 // ===== Seeded settings (generated from YOUR roll number). Do not edit. =====
 final int seed = int.parse(rollNo.substring(rollNo.length - 2));
-final int t = seed ~/ 10; // tens digit
-final int u = seed % 10; // units digit
+final int t = seed ~/ 10;
+final int u = seed % 10;
 
 const List<String> courses = [
-  'Mobile Dev', 'Data Structures', 'Operating Systems', 'Databases',
-  'Networks', 'Software Eng', 'AI', 'Web Engineering', 'Graphics', 'Security',
+  'Mobile Dev',
+  'Data Structures',
+  'Operating Systems',
+  'Databases',
+  'Networks',
+  'Software Eng',
+  'AI',
+  'Web Engineering',
+  'Graphics',
+  'Security',
 ];
+
 const List<String> names = ['Ali', 'Sara', 'Omar', 'Hina', 'Zain', 'Maya'];
 const List<String> mains = [
-  'start', 'center', 'end', 'spaceBetween', 'spaceAround', 'spaceEvenly',
+  'start',
+  'center',
+  'end',
+  'spaceBetween',
+  'spaceAround',
+  'spaceEvenly',
 ];
 const List<String> crosses = ['start', 'center', 'end'];
 const List<String> hues = ['teal', 'indigo', 'orange', 'pink', 'green'];
+
 const Map<String, MaterialColor> swatches = {
   'teal': Colors.teal,
   'indigo': Colors.indigo,
@@ -32,18 +47,18 @@ const Map<String, MaterialColor> swatches = {
 final String course = courses[u];
 
 // Steps 1-2: the clock
-final int startSec = 5 * (1 + t % 5); // where the clock starts
-final int tick = 1 + u % 3; // how much it adds every second
-final int ticks = 4 + u % 4; // how many ticks until it stops
-final int stopAt = startSec + ticks * tick; // the clock stops here
+final int startSec = 5 * (1 + t % 5);
+final int tick = 1 + u % 3;
+final int ticks = 4 + u % 4;
+final int stopAt = startSec + ticks * tick;
 
 // Steps 4-5: the tiles
 final String tileA = names[u % 6];
 final String tileB = names[(u + 2) % 6];
 final String tileC = names[(u + 4) % 6];
-final int tapsToMake = 2 + t % 3; // used by the experiment in Step 5
+final int tapsToMake = 2 + t % 3;
 
-// Step 6: axes (the NAMES are printed on the settings card; you type the enum)
+// Step 6: axes
 final String mainName = mains[u % 6];
 final String crossName = crosses[t % 3];
 
@@ -57,38 +72,33 @@ final double boxMargin = 4.0 + 2 * (t % 5);
 final double boxPad = 8.0 + 2 * (u % 5);
 final double boxRadius = 4.0 * (1 + (t + u) % 4);
 final double boxBorder = 1.0 + t % 3;
-final String hue = hues[(t + u) % 5]; // use swatches[hue]!.shade100
+final String hue = hues[(t + u) % 5];
 
 // Step 10: Stack
 final double dotTop = 4.0 + 4 * (t % 4);
 final double dotRight = 4.0 + 4 * (u % 4);
 final double dotBottom = 4.0 + 4 * ((t + u) % 4);
 final double dotLeft = 4.0 + 4 * ((t + 2 * u) % 4);
-// ===========================================================================
 
-// Step 2 writes to this list from initState and dispose.
+// Step 2: lifecycle log
 final List<String> lifecycleLog = <String>[];
 
 void main() => runApp(const LabApp());
 
-// Keep the name LabApp and its const constructor: the checker uses them.
 class LabApp extends StatelessWidget {
   const LabApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(title: 'Team Board', home: HomePage());
+    return const MaterialApp(
+      title: 'Team Board',
+      home: HomePage(),
+    );
   }
 }
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
-  Column(
-  children: [
-    const SettingsCard(),
-    const Clock(),
-  ],
-)
 
   @override
   Widget build(BuildContext context) {
@@ -96,134 +106,90 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(title: Text('Team Board: $course')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SettingsCard(),
-            const SizedBox(height: 12),
-            // Add each new widget BELOW the previous one, in the order the
-            // steps tell you, with a SizedBox(height: 12) between widgets.
-          ],
-        ),
+        Column(
+  children: [
+    const SettingsCard(),
+    const Welcome(),
+    const SizedBox(height: 12),
+    const Clock(),
+    Row(
+      children: [
+        Tile(tileA),
+        Tile(tileB),
+        Tile(tileC),
+      ],
+    ),
+  ],
+)
       ),
     );
   }
 }
 
-// ---- Provided: shows YOUR numbers. Keep it on the page. Do not rename.
-class SettingsCard extends StatelessWidget {
-  const SettingsCard({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      'YOUR SETTINGS (seed $seed)\n'
-      'clock: start $startSec, tick $tick, stop at $stopAt\n'
-      'tiles: $tileA, $tileB, $tileC (taps for the Step 5 experiment: $tapsToMake)\n'
-      'row main axis: $mainName | column cross axis: $crossName\n'
-      'flex: $flexA and $flexB | fixed width: ${fixedW.toStringAsFixed(0)}\n'
-      'box: margin $boxMargin, padding $boxPad, radius $boxRadius, '
-      'border $boxBorder, colour $hue\n'
-      'stamp: top $dotTop, right $dotRight, bottom $dotBottom, left $dotLeft',
-      key: const Key('settings'),
-      style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
-    );
-  }
-}
-
-// ---- Provided for Step 7. It overflows on purpose. Do not rename anything.
-class SummaryRow extends StatelessWidget {
-  const SummaryRow({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Text(
-          'Part A: read the widget tree of the $course board from top to bottom.',
-          key: const Key('sum-a'),
-        ),
-        Text(
-          'Part B: build each box from small widgets and never extend a built-in class.',
-          key: const Key('sum-b'),
-        ),
-        Text(
-          'Part C: break the layout on purpose, then fix it with Expanded or Wrap.',
-          key: const Key('sum-c'),
-        ),
-      ],
-    );
-  }
-}
-import 'dart:async';
-import 'package:flutter/material.dart';
-
+// Clock: Steps 1 and 2
 class Clock extends StatefulWidget {
   const Clock({super.key});
 
   @override
-  _ClockState createState() => _ClockState();
+  State<Clock> createState() => _ClockState();
 }
 
 class _ClockState extends State<Clock> {
   late Timer _timer;
   int _seconds = startSec;
+  int _builds = 0;
 
   @override
   void initState() {
     super.initState();
+    lifecycleLog.add('initState');
 
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() => _seconds += tick);
+      if (_seconds >= stopAt) {
+        timer.cancel();
+        return;
+      }
 
-      if (_seconds >= stopAt) timer.cancel();
+      setState(() {
+        _seconds += tick;
+        if (_seconds >= stopAt) {
+          _seconds = stopAt;
+          timer.cancel();
+        }
+      });
     });
   }
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Text(
-//       'Session: $_seconds s',
-//       key: const Key('clock'),
-//     );
-//   }
-// }
+  @override
+  void dispose() {
+    _timer.cancel();
+    lifecycleLog.add('dispose');
+    super.dispose();
+  }
 
-@override
-Widget build(BuildContext context) {
-  _builds++;
+  @override
+  Widget build(BuildContext context) {
+    _builds++;
 
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        'Session: $_seconds s',
-        key: const Key('clock'),
-      ),
-      Text(
-        'Builds: $_builds',
-        key: const Key('builds'),
-      ),
-      Probe(seconds: _seconds),
-    ],
-  );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Session: $_seconds s',
+          key: const Key('clock'),
+        ),
+        Text(
+          'Builds: $_builds',
+          key: const Key('builds'),
+        ),
+        Probe(seconds: _seconds),
+      ],
+    );
+  }
 }
 
-
-
-// Why does Builds increase by one per second and not by two?
-
-// The Timer calls setState once every second. This schedules a rebuild
-// of the widget, so the build counter increases by one per rebuild.
-
-
-// Why must _timer.cancel() be called in dispose?
-
-// When the widget leaves the screen, dispose cancels the timer so it
-// cannot keep running and calling setState on a disposed State object.
-// Without cancellation, Flutter may report:
-// "setState() called after dispose()".
-
+// Step 3: BuildContext, Widget and Element
 class Probe extends StatelessWidget {
   final int seconds;
 
@@ -261,3 +227,96 @@ class Probe extends StatelessWidget {
     );
   }
 }
+
+// Provided settings display
+class SettingsCard extends StatelessWidget {
+  const SettingsCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      'YOUR SETTINGS (seed $seed)\n'
+      'clock: start $startSec, tick $tick, stop at $stopAt\n'
+      'tiles: $tileA, $tileB, $tileC '
+      '(taps for the Step 5 experiment: $tapsToMake)\n'
+      'row main axis: $mainName | column cross axis: $crossName\n'
+      'flex: $flexA and $flexB | fixed width: ${fixedW.toStringAsFixed(0)}\n'
+      'box: margin $boxMargin, padding $boxPad, radius $boxRadius, '
+      'border $boxBorder, colour $hue\n'
+      'stamp: top $dotTop, right $dotRight, bottom $dotBottom, left $dotLeft',
+      key: const Key('settings'),
+      style: const TextStyle(fontFamily: 'monospace', fontSize: 12),
+    );
+  }
+}
+
+// Provided for Step 7: this row intentionally overflows until Step 7.
+class SummaryRow extends StatelessWidget {
+  const SummaryRow({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text(
+          'Part A: read the widget tree of the $course board from top to bottom.',
+          key: const Key('sum-a'),
+        ),
+        Text(
+          'Part B: build each box from small widgets and never extend a built-in class.',
+          key: const Key('sum-b'),
+        ),
+        Text(
+          'Part C: break the layout on purpose, then fix it with Expanded or Wrap.',
+          key: const Key('sum-c'),
+        ),
+      ],
+    );
+  }
+}
+
+class Welcome extends StatelessWidget {
+  const Welcome({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(
+        'Welcome, $studentName',
+        key: const Key('welcome'),
+      ),
+    );
+  }
+}
+
+class Tile extends StatefulWidget {
+  const Tile(this.label, {super.key});
+
+  final String label;
+
+  @override
+  State<Tile> createState() => _TileState();
+}
+
+class _TileState extends State<Tile> {
+  int taps = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {
+        setState(() => taps++);
+      },
+      child: Text('${widget.label}: $taps'),
+    );
+  }
+}
+
+// Widget is a configuration; Element connects it to the tree and
+// retains State for StatefulWidget instances. RenderObject handles layout
+// and painting. Probe lets us observe widget and element identities.
+//step4
+// This style is called composition.
+// Flutter prefers composition because small, reusable widgets can be
+// combined to build complex interfaces. Each Tile manages its own
+// state, making the code easier to reuse, test, and maintain.
