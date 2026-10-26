@@ -121,7 +121,10 @@ children: [
   const SizedBox(height: 12),
   const ShareRow(),
   const SizedBox(height: 12),
-  const InfoBox()
+  const InfoBox(),
+  const SizedBox(height: 12),
+  const StampStack(),
+
 ],
 
       vsr tiles = [
@@ -541,3 +544,47 @@ class InfoBox extends StatelessWidget {
 // Use SizedBox when you need a fixed size or a simple gap.
 // Use Container when you need decoration, a background, a border,
 // or a combination of layout and styling.
+
+
+
+class StampStack extends StatelessWidget {
+  const StampStack({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      key: const Key('stack'),
+      children: [
+        Container(
+          key: const Key('layer-base'),
+          width: 300,
+          height: 120,
+          color: Colors.grey.shade300,
+        ),
+        Positioned(
+          top: dotTop,
+          right: dotRight,
+          child: const Icon(
+            Icons.star,
+            key: Key('dot-top'),
+          ),
+        ),
+        Positioned(
+          bottom: dotBottom,
+          left: dotLeft,
+          child: const Icon(
+            Icons.circle,
+            key: Key('dot-bottom'),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// Think:
+// The Stack's size is determined by its non-positioned child (the grey Container)
+// when it has a fixed width and height.
+// The first child is painted at the bottom, and later children appear above it.
+// If the Icons came first and the grey Container last, the grey Container
+// would paint over the Icons and hide them.
